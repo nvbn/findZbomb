@@ -9,6 +9,7 @@ Rectangle {
         source: '8bit.ttf'
     }
     Rectangle {
+        id: editorHolder
         width: 300
         height: parent.height - 50
         color: '#000000'
@@ -102,6 +103,7 @@ Rectangle {
         }
     }
     Rectangle {
+        id: mapHolder
         x: 300
         y: 0
         width: parent.width - 300
@@ -238,6 +240,24 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 font.family: bitFont.name
                 font.pointSize: 24
+            }
+        }
+    }
+    Rectangle {
+        id: resizer
+        width: 10
+        height: editorHolder.height
+        color: '#a9a9a9'
+        x: editorHolder.width - 5
+        anchors.verticalCenter:  editorHolder.verticalCenter
+        MouseArea {
+            anchors.fill: parent
+            drag.target: resizer
+            drag.axis: Drag.XAxis
+            onPositionChanged: {
+                editorHolder.width = resizer.x + 5
+                mapHolder.x =  resizer.x + 5
+                mapHolder.width = main.width - mapHolder.x
             }
         }
     }
