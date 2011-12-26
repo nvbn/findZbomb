@@ -96,9 +96,6 @@ Rectangle {
                         codeEditor.cursorPosition = position + 1 + spaces.length
                     }
                 }
-                Keys.onReleased: {
-                    obj.upd_code(codeEditor.text)
-                }
             }
         }
     }
@@ -174,6 +171,7 @@ Rectangle {
         width: 350
         height: 100
         color: '#ff0000'
+        z: 100
         Text {
             id: bombedNotify
             visible: false

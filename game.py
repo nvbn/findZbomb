@@ -115,6 +115,7 @@ class GameApp(QDeclarativeView):
     @Slot(str)
     def upd_code(self, code):
         self.settings.setValue('code', code)
+        self.settings.sync()
 
     def show_menu(self):
         self.hide()
@@ -123,7 +124,9 @@ class GameApp(QDeclarativeView):
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.show_menu()
-
+        else:
+            self.upd_code(self.rootObject().get_code())  # fix shit with events
+            event.setAccepted(False)
 
 class Menu(QDeclarativeView):
 
@@ -162,6 +165,7 @@ class Menu(QDeclarativeView):
 
     @Slot()
     def exit(self):
+        self.game_app.settings.sync()
         sys.exit()
 
     @Slot(result=str)
@@ -194,5 +198,11 @@ if __name__ == '__main__':
     widget.setWindowIcon(QIcon('images/bomb.png'))
     widget.setWindowTitle('findZbomb!')
     widget.show()
-    sys.exit(app.exec_())
+    try:
+        app.exec_()
+    except Exception, e:
+        print e
+    finally:
+        game_app.settings.sync()
+        sys.exit(0)
 
