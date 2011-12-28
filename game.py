@@ -4,6 +4,7 @@ from PySide.QtCore import QObject, QThread, Signal, Slot, QTimer, QSettings, Qt
 from PySide.QtDeclarative import QDeclarativeView
 from PySide.QtGui import QApplication, QMainWindow, QIcon
 import sys
+from audio import Sounder
 from maps import Map, Block, Bomb, Space
 from robot import BaseRobot
 
@@ -35,6 +36,7 @@ class GameApp(QDeclarativeView):
 
     def __init__(self, menu, settings, *args, **kwargs):
         QDeclarativeView.__init__(self, *args, **kwargs)
+        self.sound = Sounder()
         self.menu = menu
         self.settings = settings
         self.menu.rootObject().initial_map(self.settings.value('map', 'simple'))
@@ -60,7 +62,9 @@ class GameApp(QDeclarativeView):
         self.old_cp = None
         self.game = Game(self)
         self.map = Map(self.game, map_path)
+        self.map.failed.connect(self.sound.boom)
         self.map.failed.connect(self.failed)
+        self.map.finished.connect(self.sound.win)
         self.map.finished.connect(self.win)
         if getattr(self, 'rt', None):
             self.rt.quit()
