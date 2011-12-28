@@ -22,6 +22,7 @@ class BaseRobot(QObject):
         self.start.connect(self._start)
         self.move.connect(self._move)
         self.stop = False
+        self.moves = 0
 
     @property
     def position(self):
@@ -45,6 +46,7 @@ class BaseRobot(QObject):
     def _move(self, status):
         if not self.stop:
             time.sleep(0.4)
+            self.moves += 1
             self.on_move(status)
 
     @Slot()

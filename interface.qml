@@ -3,16 +3,61 @@ import Qt 4.7
 Rectangle {
     id: main
     width: 800
-    height: 500
+    height: 600
     FontLoader {
         id: bitFont
         source: '8bit.ttf'
     }
     Rectangle {
+        id: topPanel
+        x: 0
+        y: 0
+        width: parent.width
+        height: 50
+        color: '#0000ff'
+        Rectangle {
+            id: mapName
+            width: 300
+            anchors.left: parent.left
+            anchors.top:  parent.top
+            anchors.bottom:  parent.bottom
+            color: parent.color
+            property string  name
+            Text {
+                color: '#ffff00'
+                anchors.fill: parent
+                font.pointSize: 16
+                horizontalAlignment: Text.AlignHCenter
+                font.family: bitFont.name
+                verticalAlignment: Text.AlignVCenter
+                text: 'map: ' + parent.name
+            }
+        }
+        Rectangle {
+            id: mapMoves
+            width: 300
+            anchors.right: parent.right
+            anchors.top:  parent.top
+            anchors.bottom:  parent.bottom
+            color: parent.color
+            property int count: 0
+            Text {
+                color: '#ffff00'
+                anchors.fill: parent
+                font.pointSize: 16
+                horizontalAlignment: Text.AlignHCenter
+                font.family: bitFont.name
+                verticalAlignment: Text.AlignVCenter
+                text: 'moves: ' + parent.count
+            }
+        }
+    }
+    Rectangle {
         id: editorHolder
         width: 300
-        height: parent.height - 50
+        height: parent.height - 100
         color: '#000000'
+        y: 50
         Flickable {
             id: flickaEditor
             width: parent.width
@@ -109,9 +154,9 @@ Rectangle {
     Rectangle {
         id: mapHolder
         x: 300
-        y: 0
+        y: 50
         width: parent.width - 300
-        height: parent.height - 50
+        height: parent.height - 100
         Image {
             anchors.fill: parent
             fillMode: Image.Tile
@@ -169,6 +214,12 @@ Rectangle {
         bombedNotify.visible = false
         winNotify.visible = false
         notifyBox.visible = false
+    }
+    function set_map_name(map_name) {
+        mapName.name = map_name
+    }
+    function set_map_count(count) {
+        mapMoves.count = count
     }
     Rectangle {
         id: notifyBox

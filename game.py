@@ -53,7 +53,9 @@ class GameApp(QDeclarativeView):
 
     def set_map(self, map_path):
         if map_path:
-            self.settings.setValue('map', map_path.split('/')[-1])
+            map_name = map_path.split('/')[-1]
+            self.settings.setValue('map', map_name)
+            self.rootObject().set_map_name(map_name)
         self.map_path = map_path
         self.old_cp = None
         self.game = Game(self)
@@ -82,6 +84,8 @@ class GameApp(QDeclarativeView):
         if self.old_cp != self.map.cur_position:
             self.draw_map()
             self.old_cp = self.map.cur_position
+            if hasattr(self, 'robot'):
+                self.rootObject().set_map_count(self.robot.moves)
         QTimer.singleShot(300, self.redraw)
 
     @Slot(result=int)
