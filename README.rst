@@ -12,6 +12,7 @@ And robot have three built-in methods:
 - *go(self, destination)* -- go to the block;
 - *watch(self, destination)* -- get block;
 - *remove_bomb(self, destination)* -- remove bomb block;
+- *compass(self)* -- get destination to bomb
 
 Available destinations: self.LEFT, self.TOP_LEFT, self.TOP, self.TOP_RIGHT, self.RIGHT, self.BOTTOM_RIGHT, self.BOTTOM and self.BOTTOM_LEFT.
 

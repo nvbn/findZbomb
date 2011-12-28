@@ -28,6 +28,9 @@ class BaseRobot(QObject):
     def position(self):
         return self.map.position
 
+    def compass(self):
+        return self.map.compass()
+
     def get_pos(self, to):
         return self.position[0] + to[0], self.position[1] + to[1]
 

@@ -76,6 +76,7 @@ class Map(QObject):
                     self.cur_block = block
                 if type(block) is Bomb:
                     self.bombs += 1
+                    self.bomb = block
             self.map.append(_line)
 
     def put_robot(self, robot):
@@ -106,6 +107,23 @@ class Map(QObject):
             self.bombs -= 1
             if not self.bombs:
                 self.finished.emit()
+
+    def compass(self):
+        point = [0, 0]
+        if self.position[0] > self.bomb.x:
+            point[0] = -1
+        elif self.position[0] < self.bomb.x:
+            point[0] = 1
+        elif self.position[0] == self.bomb.x:
+            point[0] = 0
+        if self.position[1] > self.bomb.y:
+            point[1] = -1
+        elif self.position[1] < self.bomb.y:
+            point[1] = 1
+        elif self.position[1] == self.bomb.y:
+            point[1] = 0
+        return point
+
 
     def go(self, pos):
         block = self.get(pos)
