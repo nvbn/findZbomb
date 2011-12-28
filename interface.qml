@@ -5,7 +5,7 @@ Rectangle {
     width: 800
     height: 500
     FontLoader {
-        id: 'bitFont'
+        id: bitFont
         source: '8bit.ttf'
     }
     Rectangle {
@@ -50,6 +50,13 @@ Rectangle {
                 onCursorRectangleChanged: flickaEditor.ensureVisible(cursorRectangle)
                 font.pointSize: 9
                 font.family: 'Monospace'
+                selectByMouse: true
+                selectedTextColor: '#000000'
+                selectionColor: '#a9a9a9'
+                ContextMenu {
+                    target: parent
+                    main_obj: main
+                }
                 Keys.onPressed: {
                     if (event.key == Qt.Key_Tab) {
                         var position = codeEditor.cursorPosition
