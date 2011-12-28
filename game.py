@@ -31,7 +31,7 @@ class GameApp(QDeclarativeView):
         Bomb: 'blocks/bomb.qml',
         Space: 'blocks/space.qml',
     }
-    current = 'blocks/active.qml'
+    #current = 'blocks/active.qml'
     mega_start = Signal()
 
     def __init__(self, menu, settings, *args, **kwargs):
@@ -79,9 +79,11 @@ class GameApp(QDeclarativeView):
         #grid = self.rootContext().contextProperty('mapGrid')
         root = self.rootObject()
         prepared_map = map(lambda items:
-            map(lambda item: self.current if self.map.cur_block == item else self.block_tpls[type(item)], items),
+            map(lambda item: self.block_tpls[type(item)], items),
         self.map.map)
         root.draw_map(prepared_map)
+        self.rootObject().robot_to_active_pos(*self.map.position)
+
         #print grid
 
     def redraw(self):
@@ -90,6 +92,7 @@ class GameApp(QDeclarativeView):
             self.old_cp = self.map.cur_position
             if hasattr(self, 'robot'):
                 self.rootObject().set_map_count(self.robot.moves)
+                self.rootObject().robot_to_active_pos(*self.robot.position)
         QTimer.singleShot(300, self.redraw)
 
     @Slot(result=int)

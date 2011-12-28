@@ -164,14 +164,23 @@ Rectangle {
         }
         Flickable {
             anchors.fill: parent
-            contentWidth: 10000
-            contentHeight: 10000
+            contentWidth: mapGraph.width
+            contentHeight: mapGraph.height
             clip: true
-            Grid {
+            Rectangle {
+                id: mapGraph
                 anchors.leftMargin: 50
                 anchors.topMargin: 50
-                id: mapGrid
                 anchors.fill: parent
+                color: 'transparent'
+                Grid {
+                    id: mapGrid
+                    anchors.fill: parent
+                }
+                Robot {
+                    id: robotObj
+                    visible: false
+                }
             }
         }
     }
@@ -192,11 +201,20 @@ Rectangle {
             }
         }
     }
+    function robot_to_active_pos(i, y) {
+        var num = i * mapGrid.columns + y
+        var block = mapGrid.children[num]
+        robotObj.visible = true
+        robotObj.x = block.x
+        robotObj.y = block.y
+    }
     function failed() {
         bombedNotify.visible = true
+        robotObj.visible = false
         notifyBox.visible = true
     }
     function win() {
+        robotObj.visible = false
         winNotify.visible = true
         notifyBox.visible = true
     }
