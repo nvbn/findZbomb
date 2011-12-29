@@ -83,6 +83,9 @@ class Map(QObject):
                     self.bomb = block
             self.map.append(_line)
         self.title = spec.get('title', spec['path'])
+        self.background = spec.get('background', None)
+        if self.background:
+            self.background = 'maps/' + self.background
 
     @staticmethod
     def read_spec(path):

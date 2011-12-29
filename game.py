@@ -62,6 +62,9 @@ class GameApp(QDeclarativeView):
         self.map.failed.connect(self.failed)
         self.map.finished.connect(self.sound.win)
         self.rootObject().set_map_name(self.map.title)
+        self.draw_map()
+        if self.map.background:
+            self.rootObject().set_custom_background(self.map.background)
         self.map.finished.connect(self.win)
         if getattr(self, 'rt', None):
             self.rt.quit()
@@ -85,7 +88,7 @@ class GameApp(QDeclarativeView):
 
     def redraw(self):
         if self.old_cp != self.map.cur_position:
-            self.draw_map()
+            #self.draw_map()
             self.old_cp = self.map.cur_position
             if hasattr(self, 'robot'):
                 self.rootObject().set_map_count(self.robot.moves)

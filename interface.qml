@@ -177,6 +177,13 @@ Rectangle {
                     id: mapGrid
                     anchors.fill: parent
                 }
+                Image {
+                    id: mapBkg
+                    visible: false
+                    anchors.top: mapGrid.top
+                    anchors.left:  mapGrid.left
+                    fillMode: Image.Tile
+                }
                 Robot {
                     id: robotObj
                     visible: false
@@ -193,6 +200,8 @@ Rectangle {
         mapGrid.rows = h
         mapGrid.columns = w
         var num = 0
+        mapGrid.visible = true
+        mapBkg.visible = false
         for (var i = 0; i < h; i++) {
             for (var y = 0; y < w; y++) {
                 var block = Qt.createComponent(map[i][y])
@@ -239,6 +248,14 @@ Rectangle {
     function set_map_count(count) {
         mapMoves.count = count
     }
+    function set_custom_background(bkg) {
+        mapBkg.source = bkg
+        mapBkg.visible = true
+        mapBkg.width = mapGrid.columns * 20
+        mapBkg.height = mapGrid.rows * 20
+        mapGrid.visible = false
+    }
+
     Rectangle {
         id: notifyBox
         visible: false
