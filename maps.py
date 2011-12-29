@@ -1,5 +1,7 @@
+import json
 from PySide.QtCore import QObject, Signal, Slot
 import os
+import re
 
 class BaseBlock(object):
     def __init__(self, map, x, y):
@@ -57,10 +59,12 @@ class Map(QObject):
 
     def __init__(self, game, path=None):
         if not (path and os.path.isfile(path)):
-            path = 'maps/simple'
+            path = 'maps/simple.json'
         QObject.__init__(self)
         self.game = game
         game.map = self
+        spec = Map.read_spec(path)
+        path = 'maps/' + spec['path']
         with open(path) as data_map:
             tmp_map = data_map.read()
         self.map = []
@@ -78,6 +82,14 @@ class Map(QObject):
                     self.bombs += 1
                     self.bomb = block
             self.map.append(_line)
+        self.title = spec.get('title', spec['path'])
+
+    @staticmethod
+    def read_spec(path):
+        with open(path) as data_file:
+            return json.loads(
+                re.sub('[\n\t]', '', data_file.read())
+            )
 
     def put_robot(self, robot):
         self.robot = robot

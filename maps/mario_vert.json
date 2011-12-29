@@ -1,0 +1,7 @@
+{
+    "background": "mario_vert/bkg.png",
+    "person": "mario_vert/person.png",
+    "title": "VertMario",
+    "level": 1,
+    "path": "mario_vert"
+}

@@ -40,7 +40,7 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    mapNameTxt.text = 'map: ' + menu.next_map(mapNameTxt.text.substring(5))
+                    mapNameTxt.text = menu.next_map()
                 }
             }
         }
@@ -68,9 +68,9 @@ Rectangle {
                 onClicked: {
                     startBtnTxt.text = 'RESUME'
                     if (menu.check())
-                        menu.resume_game('maps/' + mapNameTxt.text.substring(5))
+                        menu.resume_game()
                     else
-                        menu.start_game('maps/' + mapNameTxt.text.substring(5))
+                        menu.start_game()
                 }
             }
         }
@@ -127,7 +127,7 @@ Rectangle {
         }
     }
     function initial_map(map) {
-        mapNameTxt.text = 'map: ' + map
+        mapNameTxt.text = map
     }
     Rectangle {
         id: helpRect

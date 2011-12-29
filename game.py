@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from glob import glob
 import os
 from PySide.QtCore import QObject, QThread, Signal, Slot, QTimer, QSettings, Qt
 from PySide.QtDeclarative import QDeclarativeView
@@ -39,7 +40,6 @@ class GameApp(QDeclarativeView):
         self.sound = Sounder()
         self.menu = menu
         self.settings = settings
-        self.menu.rootObject().initial_map(self.settings.value('map', 'simple'))
         self.rt_pool = []#fix fault
         self.setWindowTitle('findZbomb!')
         self.setSource('interface.qml')
@@ -54,10 +54,6 @@ class GameApp(QDeclarativeView):
             self.rootObject().set_code(code)
 
     def set_map(self, map_path):
-        if map_path:
-            map_name = map_path.split('/')[-1]
-            self.settings.setValue('map', map_name)
-            self.rootObject().set_map_name(map_name)
         self.map_path = map_path
         self.old_cp = None
         self.game = Game(self)
@@ -65,6 +61,7 @@ class GameApp(QDeclarativeView):
         self.map.failed.connect(self.sound.boom)
         self.map.failed.connect(self.failed)
         self.map.finished.connect(self.sound.win)
+        self.rootObject().set_map_name(self.map.title)
         self.map.finished.connect(self.win)
         if getattr(self, 'rt', None):
             self.rt.quit()
@@ -145,30 +142,37 @@ class Menu(QDeclarativeView):
         QDeclarativeView.__init__(self, *args, **kwargs)
         context = self.rootContext()
         context.setContextProperty('menu', self)
+        map_file = settings.value('map')
+        if not map_file:
+            map_file = glob('maps/*json')[0]
+        self.selected_map = map_file
         self.setSource('menu.qml')
         self.setResizeMode(QDeclarativeView.SizeRootObjectToView)
+        self.rootObject().initial_map(Map.read_spec(map_file)['title'])
 
-    @Slot(str)
-    def start_game(self, map_path):
-        game_app.show()
-        game_app.set_map(map_path)
-        self.game_app = game_app
+    @Slot()
+    def start_game(self):
+        self.game_app.show()
+        self.game_app.set_map(self.selected_map)
         self.hide()
 
-    @Slot(str)
-    def resume_game(self, map_path):
-        if self.game_app.map_path != map_path:
-            self.game_app.set_map(map_path)
+    @Slot()
+    def resume_game(self):
+        if self.game_app.map_path != self.selected_map:
+            self.game_app.set_map(self.selected_map)
         self.hide()
         self.game_app.show()
 
-    @Slot(str, result=str)
-    def next_map(self, current):
-        maps = os.listdir('maps')
+    @Slot(result=str)
+    def next_map(self):
+        maps = glob('maps/*json')
         try:
-            return maps[maps.index(current) + 1]
+            selected = maps[maps.index(self.selected_map) + 1]
         except (IndexError, ValueError):
-            return maps[0]
+            selected = maps[0]
+        self.selected_map = selected
+        settings.setValue('map', self.selected_map)
+        return Map.read_spec(selected)['title']
 
     @Slot(result=int)
     def check(self):
@@ -201,10 +205,11 @@ class Window(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    m = Menu()
     settings = QSettings('0GNM', 'findZbomb')
+    m = Menu()
     game_app = GameApp(m, settings)
     game_app.hide()
+    m.game_app = game_app
     widget = Window(m, game_app)
     widget.setWindowIcon(QIcon('images/bomb.png'))
     widget.setWindowTitle('findZbomb!')
