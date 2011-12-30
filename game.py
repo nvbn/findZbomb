@@ -37,6 +37,7 @@ class GameApp(QDeclarativeView):
 
     def __init__(self, menu, settings, *args, **kwargs):
         QDeclarativeView.__init__(self, *args, **kwargs)
+        self.exception = None
         self.sound = Sounder()
         self.menu = menu
         self.settings = settings
@@ -62,6 +63,8 @@ class GameApp(QDeclarativeView):
         self.map.failed.connect(self.failed)
         self.map.finished.connect(self.sound.win)
         self.rootObject().set_map_name(self.map.title)
+        if hasattr(self, 'robot'):
+            self.rootObject().robot_to_active_pos(*self.robot.position)
         self.draw_map()
         if self.map.background:
             self.rootObject().set_custom_background(self.map.background)
@@ -93,6 +96,10 @@ class GameApp(QDeclarativeView):
             if hasattr(self, 'robot'):
                 self.rootObject().set_map_count(self.robot.moves)
                 self.rootObject().robot_to_active_pos(*self.robot.position)
+        if self.exception:
+            self.robot.stop = True
+            self.rootObject().show_exception(unicode(self.exception))
+            self.exception = None
         QTimer.singleShot(300, self.redraw)
 
     @Slot(result=int)
@@ -109,9 +116,14 @@ class GameApp(QDeclarativeView):
 
     def _start(self):
         Robot = BaseRobot#fix code highlighting
-        exec(self.code)
-        self.robot = Robot(self.map)
-        self.map.put_robot(self.robot)
+        self.exception = None
+        try:
+            exec(self.code)
+            self.robot = Robot(self.map)
+            self.map.put_robot(self.robot)
+            self.rootObject().robot_to_active_pos(*self.robot.position)
+        except Exception, e:
+            self.exception = e
 
     @Slot()
     def failed(self):

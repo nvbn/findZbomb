@@ -50,13 +50,18 @@ class BaseRobot(QObject):
         if not self.stop:
             time.sleep(0.4)
             self.moves += 1
-            self.on_move(status)
+            try:
+                self.on_move(status)
+            except Exception, e:
+                self.map.game.app.exception = e
 
     @Slot()
     def _start(self):
         if not self.stop:
-            self.on_start()
-
+            try:
+                self.on_start()
+            except Exception, e:
+                self.map.game.app.exception = e
 
     def on_move(self, status):
         raise NotImplementedError

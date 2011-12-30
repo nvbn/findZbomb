@@ -137,7 +137,7 @@ class Map(QObject):
             point[1] = 1
         elif self.position[1] == self.bomb.y:
             point[1] = 0
-        return point
+        return tuple(point)
 
 
     def go(self, pos):

@@ -218,18 +218,22 @@ Rectangle {
         robotObj.y = block.y
     }
     function failed() {
-        bombedNotify.visible = true
         robotObj.visible = false
+        notifyText.visible = true
         notifyBox.visible = true
+        notifyText.text = 'You fail'
     }
     function win() {
         robotObj.visible = false
-        winNotify.visible = true
+        notifyText.visible = true
         notifyBox.visible = true
+        notifyText.text = 'You win'
     }
-    function notify_exception() {
-        notifyException.visible = true
+    function show_exception(txt) {
+        robotObj.visible = false
+        notifyText.visible = true
         notifyBox.visible = true
+        notifyText.text = 'Exception:\n\n' + txt
     }
     function get_code() {
         return codeEditor.text
@@ -238,8 +242,7 @@ Rectangle {
         return codeEditor.text = code
     }
     function remove_notify() {
-        bombedNotify.visible = false
-        winNotify.visible = false
+        notifyText.visible = false
         notifyBox.visible = false
     }
     function set_map_name(map_name) {
@@ -259,15 +262,16 @@ Rectangle {
     Rectangle {
         id: notifyBox
         visible: false
-        x: main.width / 2 - 175
-        y: main.height / 2 - 60
-        width: 350
-        height: 100
+        anchors.horizontalCenter: main.horizontalCenter
+        anchors.verticalCenter: main.verticalCenter
         color: '#ff0000'
+        width: 400
+        height:  300
         z: 100
         Text {
-            id: bombedNotify
+            id: notifyText
             visible: false
+            clip: true
             anchors.fill: parent
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -275,28 +279,7 @@ Rectangle {
             font.pointSize: 24
             font.family: bitFont.name
             text: 'Your bombed'
-        }
-        Text {
-            id: winNotify
-            visible: false
-            anchors.fill: parent
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            color: '#00ff00'
-            text: 'Your win'
-            font.pointSize: 24
-            font.family: bitFont.name
-        }
-        Text {
-            id: notifyException
-            visible: false
-            anchors.fill: parent
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            color: '#00ff00'
-            text: 'Exception'
-            font.pointSize: 24
-            font.family: bitFont.name
+            wrapMode: Text.WordWrap
         }
         MouseArea {
             anchors.fill: parent
