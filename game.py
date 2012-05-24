@@ -97,7 +97,8 @@ class GameApp(QDeclarativeView):
                 self.rootObject().set_map_count(self.robot.moves)
                 self.rootObject().robot_to_active_pos(*self.robot.position)
         if self.exception:
-            self.robot.stop = True
+            if hasattr(self, 'robot'):
+                self.robot.stop = True
             self.rootObject().show_exception(unicode(self.exception))
             self.exception = None
         QTimer.singleShot(300, self.redraw)
