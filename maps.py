@@ -69,6 +69,7 @@ class Map(QObject):
             tmp_map = data_map.read()
         self.map = []
         self.bombs = 0
+        self.bombs_list = []
         for y, line in enumerate(tmp_map.split('\n')):
             _line = []
             for x, item in enumerate(line):
@@ -80,7 +81,7 @@ class Map(QObject):
                     self.cur_block = block
                 if type(block) is Bomb:
                     self.bombs += 1
-                    self.bomb = block
+                    self.bombs_list.append(block)
             self.map.append(_line)
         self.title = spec.get('title', spec['path'])
         self.background = spec.get('background', None)
@@ -97,6 +98,17 @@ class Map(QObject):
     def put_robot(self, robot):
         self.robot = robot
         self.robot.start.emit()
+
+    @property
+    def bomb(self):
+        try:
+            return sorted(
+                filter(lambda bomb: not bomb.used, self.bombs_list),
+                key=lambda bomb: 
+                    (bomb.x - self.position[0]) ** 2 + (bomb.y - self.position[1]) ** 2,
+            )[-1]
+        except IndexError:
+            return None
 
     @property
     def position(self):
@@ -117,13 +129,15 @@ class Map(QObject):
     def remove_bomb(self, pos):
         block = self.get(pos)
         if type(block) is Bomb:
-            print self.bombs
+            print filter(lambda x: not x.used, self.bombs_list)
             block.repair()
             self.bombs -= 1
             if not self.bombs:
                 self.finished.emit()
 
     def compass(self):
+        if not self.bomb:
+            return None
         point = [0, 0]
         if self.position[0] > self.bomb.x:
             point[0] = -1
